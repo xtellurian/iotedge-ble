@@ -1,4 +1,4 @@
-FROM arm32v7/node:9
+FROM arm32v7/node:4.8-stretch
 
 
 RUN apt-get update
