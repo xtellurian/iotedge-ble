@@ -1,7 +1,7 @@
-FROM hypriot/rpi-node:8
+FROM arm32v7/node:9
 
-RUN sudo apt-get update
-RUN sudo apt-get install bluetooth bluez libbluetooth-dev libudev-dev
+RUN apt-get update
+RUN apt-get install bluetooth bluez libbluetooth-dev libudev-dev
 
 RUN npm install
 
