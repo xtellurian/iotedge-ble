@@ -1,0 +1,25 @@
+# builder
+FROM arm32v7/node:8-stretch as builder
+
+# RUN apt-get update && apt-get -y install bluetooth bluez libbluetooth-dev libudev-dev
+
+WORKDIR /build/
+
+COPY package*.json ./
+
+RUN npm install --production
+
+COPY *.js ./
+
+# runtime 
+FROM arm32v7/node:8-slim 
+RUN apt-get update && apt-get -y install bluetooth bluez libbluetooth-dev libudev-dev
+# allow node right privelidges for bluetooth
+RUN which node
+RUN setcap cap_net_raw+ep /usr/local/bin/node
+WORKDIR /app/
+
+COPY --from=builder /build/ .
+
+USER node
+CMD ["node", "app.js"]
