@@ -5,6 +5,7 @@ var Client = require('azure-iot-device').ModuleClient;
 var Message = require('azure-iot-device').Message;
 
 const ble = require("./ble");
+var logLevel;
 
 console.log("Starting BLE Module");
 
@@ -35,6 +36,21 @@ Client.fromEnvironment(Transport, function (err, client) {
           client.sendOutputEvent("ibeacon", new Message(JSON.stringify(b)), printResultFor("sending ibeacon"));
 
         });
+
+        client.getTwin(function (err, twin) {
+          if (err) {
+              console.error('Error getting twin: ' + err.message);
+          } else {
+              twin.on('properties.desired', function(delta) {
+                console.log("Desired properties changed");
+                  if (delta.LogLevel) {
+                    logLevel = delta.LogLevel;
+                    console.log(`logLevel is now ${logLevel}`)
+                  }
+              });
+          }
+      });
+
         ble.startScanning();
         console.log("Started Scanning");
       }
