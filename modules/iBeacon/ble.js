@@ -33,4 +33,8 @@ exports.onDiscover = function (callback) {
 
 exports.startScanning = function() {
     Bleacon.startScanning();
-}
+};
+
+exports.stopScanning = function () {
+    Bleacon.stopScanning();
+};
