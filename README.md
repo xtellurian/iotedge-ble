@@ -32,3 +32,7 @@ Include this module in your deployment.template.json file:
 ## How it works
 
 This module uses the [Bleacon](https://github.com/sandeepmistry/node-bleacon) package
+
+## Logging
+
+We are using [Log Please](https://github.com/haadcode/logplease)
