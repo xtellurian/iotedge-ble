@@ -3,28 +3,44 @@
 var Transport = require('azure-iot-device-mqtt').Mqtt;
 var Client = require('azure-iot-device').ModuleClient;
 var Message = require('azure-iot-device').Message;
+const Logger = require("logplease");
+
+const logger = Logger.create("app.js");
+
+// logger.debug(`This is a debug message`);
+// logger.log(`This is a log message`); // alias for debug()
+// logger.info(`This is a info message`);
+// logger.warn(`This is a warning`);
+// logger.error(`This is an error`);
+
+// set environment variable to set log level, e.g. LOG=debug
+
+// DEBUG
+// INFO
+// WARN
+// ERROR
+// NONE
 
 const ble = require("./ble");
 var logLevel;
 
-console.log("Starting BLE Module");
+logger.info("Starting BLE Module");
 
 Client.fromEnvironment(Transport, function (err, client) {
   if (err) {
-    console.log("Error getting client");
-    console.log(err);
+    logger.error("Error getting client", err)
     throw err;
   } else {
     client.on('error', function (err) {
       throw err;
     });
-    console.log("Connected to edge instance");
+    logger.info("Got a Client");
     // connect to the Edge instance
     client.open(function (err) {
       if (err) {
         throw err;
       } else {
-        console.log('IoT Hub module client initialized');
+        logger.info("Client Opened");
 
         // Act on input messages to the module.
         client.on('inputMessage', function (inputName, msg) {
@@ -32,27 +48,23 @@ Client.fromEnvironment(Transport, function (err, client) {
         });
 
         ble.onDiscover((b) => {
-          console.log(`Discovered iBeacon, UUID: ${b.uuid}, major: ${b.major}, minor ${b.minor}`);
+          logger.debug(`Discovered iBeacon, ${JSON.stringify(b)}`);
           client.sendOutputEvent("ibeacon", new Message(JSON.stringify(b)), printResultFor("sending ibeacon"));
 
         });
 
         client.getTwin(function (err, twin) {
           if (err) {
-              console.error('Error getting twin: ' + err.message);
+              logger.error('Error getting twin', err.message);
           } else {
               twin.on('properties.desired', function(delta) {
-                console.log("Desired properties changed");
-                  if (delta.LogLevel) {
-                    logLevel = delta.LogLevel;
-                    console.log(`logLevel is now ${logLevel}`)
-                  }
+                logger.info("Desired properties changed");
               });
           }
       });
 
         ble.startScanning();
-        console.log("Started Scanning");
+        logger.info("Started Scanning");
       }
     });
   }
@@ -75,10 +87,10 @@ function pipeMessage(client, inputName, msg) {
 function printResultFor(op) {
   return function printResult(err, res) {
     if (err) {
-      console.log(op + ' error: ' + err.toString());
+      logger.error(op + ' error: ' + err.toString());
     }
     if (res) {
-      console.log(op + ' status: ' + res.constructor.name);
+      logger.debug(op + ' status: ' + res.constructor.name);
     }
   };
 }

@@ -1,15 +1,7 @@
-// import bleacon
 var Bleacon = require('bleacon');
-console.log("ble.js loaded");
-// var connectCallback = function (err) {
-//   if (err) {
-//     console.error('Could not connect: ' + err);
-//   } else {
-//     console.log('Client connected');
-//     Bleacon.startScanning(); // scan for any bleacons
-//     console.log('Started Scanning');
-//   };
-// };
+const Logger = require("logplease");
+
+const logger = Logger.create("ble.js");
 
 // Bleacon.on('discover', function(b) {
 //     console.log('found a beacon');
@@ -33,8 +25,10 @@ exports.onDiscover = function (callback) {
 
 exports.startScanning = function() {
     Bleacon.startScanning();
+    logger.info("Started Scanning");
 };
 
 exports.stopScanning = function () {
     Bleacon.stopScanning();
+    logger.info("Stopped Scanning");
 };
