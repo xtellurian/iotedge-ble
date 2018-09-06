@@ -1,0 +1,23 @@
+# FROM node:8-alpine
+
+# # RUN apt-get update && apt-get -y install bluetooth bluez libbluetooth-dev libudev-dev
+
+# RUN apk add --update bluetooth bluez libbluetooth-dev libudev-dev
+
+# WORKDIR /app/
+
+# COPY package*.json ./
+
+# RUN apk add --no-cache --virtual .gyp \
+#         python \
+#         make \
+#         g++ \
+#     && npm install \
+#         --production \
+#     && apk del .gyp
+
+# COPY app.js ./
+
+# USER node
+
+# CMD ["node", "app.js"]

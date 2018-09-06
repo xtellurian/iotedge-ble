@@ -1,6 +1,4 @@
-# FROM arm32v7/node:8-slim
-
-# RUN apt-get update && apt-get -y install bluetooth bluez libbluetooth-dev libudev-dev
+# FROM stefanscherer/node-windows:8-nanoserver
 
 # WORKDIR /app/
 
@@ -9,7 +7,5 @@
 # RUN npm install --production
 
 # COPY app.js ./
-
-# USER node
 
 # CMD ["node", "--inspect=0.0.0.0:9229", "app.js"]
