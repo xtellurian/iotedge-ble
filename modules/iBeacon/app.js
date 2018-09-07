@@ -22,7 +22,15 @@ const logger = Logger.create("app.js");
 // NONE
 
 const ble = require("./ble");
-var logLevel;
+var beaconCount = 0;
+
+function logBeaconCount() {
+  logger.info(`Beacon Count for last 10 seconds was ${beaconCount}`);
+  beaconCount = 0;
+}
+
+setTimeout(logBeaconCount, 1000 * 10 );
+
 
 logger.info("Starting BLE Module");
 
@@ -49,6 +57,7 @@ Client.fromEnvironment(Transport, function (err, client) {
 
         ble.onDiscover((b) => {
           logger.debug(`Discovered iBeacon, ${JSON.stringify(b)}`);
+          beaconCount++;
           client.sendOutputEvent("ibeacon", new Message(JSON.stringify(b)), printResultFor("sending ibeacon"));
 
         });
