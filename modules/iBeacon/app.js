@@ -29,7 +29,7 @@ function logBeaconCount() {
   beaconCount = 0;
 }
 
-setTimeout(logBeaconCount, 1000 * 10 );
+setInterval(logBeaconCount, 1000 * 10 );
 
 
 logger.info("Starting BLE Module");
