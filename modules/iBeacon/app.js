@@ -56,10 +56,10 @@ Client.fromEnvironment(Transport, function (err, client) {
         });
 
         ble.onDiscover((b) => {
+          b.timestamp =  new Date();
           logger.debug(`Discovered iBeacon, ${JSON.stringify(b)}`);
           beaconCount++;
           client.sendOutputEvent("ibeacon", new Message(JSON.stringify(b)), printResultFor("sending ibeacon"));
-
         });
 
         client.getTwin(function (err, twin) {
