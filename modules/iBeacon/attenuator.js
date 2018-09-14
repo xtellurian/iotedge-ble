@@ -28,6 +28,9 @@ exports.filterByUuidTimeout = function (beacon, callback) {
             } else {
                 // don't do the beacon
             }
+        } else {
+            lastSentTimes[beacon.uuid] = now;
+            callback(beacon);
         }
     }
 }
