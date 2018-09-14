@@ -1,6 +1,6 @@
 
-// this should be uuid string -> lastSeen Date
-const lastSeenTimes = {}
+// this should be uuid string -> lastSent Date
+const lastSentTimes = {}
 let timeout = 0;
 
 const Logger = require("logplease");
@@ -17,14 +17,13 @@ export function filterByUuidTimeout(beacon, callback) {
         callback(beacon); // pass through if not set
     } else {
         var now = new Date();
-        var lastSeen = lastSeenTimes[beaon.uuid];
+        var lastSent = lastSentTimes[beaon.uuid];
 
-        // update last seen time (dont reference lastSeenTimes after this line)
-        lastSeenTimes[beacon.uuid] = now;
-
-        if (lastSeen) {
-            var newDate = new Date(lastSeen.getTime() + (1000 * timeout));
-            if (lastSeen + newDate > now) {
+        if (lastSent) {
+            var newDate = new Date(lastSent.getTime() + (1000 * timeout));
+            if (lastSent + newDate > now) {
+                // update last seen time (dont reference lastSentTimes after this line)
+                lastSentTimes[beacon.uuid] = now;
                 callback(beacon)
             } else {
                 // don't do the beacon
