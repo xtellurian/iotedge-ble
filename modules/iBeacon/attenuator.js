@@ -17,7 +17,7 @@ exports.filterByUuidTimeout = function (beacon, callback) {
         callback(beacon); // pass through if not set
     } else {
         var now = new Date();
-        var lastSent = lastSentTimes[beaon.uuid];
+        var lastSent = lastSentTimes[beacon.uuid];
 
         if (lastSent) {
             var newDate = new Date(lastSent.getTime() + (1000 * timeout));
