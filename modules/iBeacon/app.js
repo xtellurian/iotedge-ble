@@ -66,6 +66,7 @@ Client.fromEnvironment(Transport, function (err, client) {
           beaconCount++;
           attenuator.filterByUuidTimeout(ble, (filteredBle) => {
             filteredBle.timestamp = new Date();
+            filteredBle.type = "beacon";
             logger.debug(`Discovered iBeacon, ${JSON.stringify(filteredBle)}`);
             client.sendOutputEvent("ibeacon", new Message(JSON.stringify(filteredBle)), printResultFor("sending ibeacon"));
             sentBeaconCount++;
