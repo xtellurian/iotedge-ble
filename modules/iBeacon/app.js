@@ -4,6 +4,8 @@ var Transport = require('azure-iot-device-mqtt').Mqtt;
 var Client = require('azure-iot-device').ModuleClient;
 var Message = require('azure-iot-device').Message;
 const Logger = require("logplease");
+const attenuator = require("./attenuator");
+const ble = require("./ble");
 
 const logger = Logger.create("app.js");
 
@@ -21,15 +23,20 @@ const logger = Logger.create("app.js");
 // ERROR
 // NONE
 
-const ble = require("./ble");
+const timeout = parseInt(process.env.ATTENUATION_TIME);
+attenuator.setTimeoutInSeconds(timeout);
+
 var beaconCount = 0;
+var sentBeaconCount = 0;
 
 function logBeaconCount() {
   logger.info(`Beacon Count for last 10 seconds was ${beaconCount}`);
+  logger.info(`Sent ${sentBeaconCount} Beacons in last 10 seconds`);
   beaconCount = 0;
+  sentBeaconCount = 0;
 }
 
-setInterval(logBeaconCount, 1000 * 10 );
+setInterval(logBeaconCount, 1000 * 10);
 
 
 logger.info("Starting BLE Module");
@@ -55,22 +62,25 @@ Client.fromEnvironment(Transport, function (err, client) {
           pipeMessage(client, inputName, msg);
         });
 
-        ble.onDiscover((b) => {
-          b.timestamp =  new Date();
-          logger.debug(`Discovered iBeacon, ${JSON.stringify(b)}`);
+        ble.onDiscover((ble) => {
           beaconCount++;
-          client.sendOutputEvent("ibeacon", new Message(JSON.stringify(b)), printResultFor("sending ibeacon"));
+          attenuator.filterByUuidTimeout(ble, (filteredBle) => {
+            filteredBle.timestamp = new Date();
+            logger.debug(`Discovered iBeacon, ${JSON.stringify(filteredBle)}`);
+            client.sendOutputEvent("ibeacon", new Message(JSON.stringify(filteredBle)), printResultFor("sending ibeacon"));
+            sentBeaconCount++;
+          });
         });
 
         client.getTwin(function (err, twin) {
           if (err) {
-              logger.error('Error getting twin', err.message);
+            logger.error('Error getting twin', err.message);
           } else {
-              twin.on('properties.desired', function(delta) {
-                logger.info("Desired properties changed");
-              });
+            twin.on('properties.desired', function (delta) {
+              logger.info("Desired properties changed");
+            });
           }
-      });
+        });
 
         ble.startScanning();
         logger.info("Started Scanning");
