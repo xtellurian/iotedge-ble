@@ -13,18 +13,25 @@ Include this module in your deployment.template.json file:
 ```js
 
 "modules": {
-          "iBeacon": {
-            "version": "1.0",
-            "type": "docker",
-            "status": "running",
-            "restartPolicy": "always",
-            "settings": {
-              "image": "flanagan89/iotedgemodule-ibeacon:0.0.2-arm32v7",
-              "createOptions": "{\"NetworkingConfig\":{\"EndpointsConfig\": {\"host\": {}}},\"HostConfig\": {\"NetworkMode\": \"host\"}}"
-            }
-          }
-        }
-
+  "iBeacon": {
+    "version": "1.0",
+    "type": "docker",
+    "status": "running",
+    "restartPolicy": "always",
+    "settings": {
+      "image": "flanagan89/iotedgemodule-ibeacon:0.0.12-arm32v7",
+      "createOptions": "{\"NetworkingConfig\":{\"EndpointsConfig\": {\"host\": {}}},\"HostConfig\": {\"NetworkMode\": \"host\"}}"
+    },
+    "env": {
+      "LOG": {
+        "value": "INFO"
+      },
+      "ATTENUATION_TIME": {
+        "value": 5
+      }
+    }
+  }
+}
 ```
 
 > Important: You must set the create options with HostConfig.NetworkMode = "host" (as above)
